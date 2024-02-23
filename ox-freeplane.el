@@ -43,7 +43,7 @@
 ;;; Define Back-End
 
 (org-export-define-derived-backend 'freeplane 'html
-  :export-block "FREEPLANE"
+;;  :export-block "FREEPLANE"
   :menu-entry
   '(?f "Export to Freeplane Mindmap"
        ((?f "As Freeplane Mindmap file" org-freeplane-export-to-freeplane)
