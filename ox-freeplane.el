@@ -37,7 +37,7 @@
 ;;; Dependencies
 
 (require 'ox-html)
-
+(require 'cl-lib)
 
 
 ;;; Define Back-End
@@ -145,7 +145,7 @@ This is an inverse function of `libxml-parse-xml-region'.
 For purposes of Freeplane export, PARSED-XML is a node style
 specification - \"<node ...>...</node>\" - as a parse tree."
   (when contents
-    (assert (symbolp (car parsed-xml))))
+    (cl-assert (symbolp (car parsed-xml))))
   (cond
    ((null parsed-xml) "")
    ((stringp parsed-xml) parsed-xml)
@@ -183,7 +183,7 @@ ELEMENT can be any of the following types - `org-data',
 `headline' or `section'.  See `org-freeplane-styles' for style
 mappings of different outline levels."
   (let ((style-name
-	 (case (org-element-type element)
+	 (cl-case (org-element-type element)
 	   (headline
 	    (org-export-get-relative-level element info))
 	   (section
@@ -294,7 +294,7 @@ will result in following node:
 ;;;; Helpers :: Node contents
 
 (defun org-freeplane--richcontent (type contents &optional css-style)
-  (let* ((type (case type
+  (let* ((type (cl-case type
 		 (note "NOTE")
 		 (node "NODE")
 		 (t "NODE")))
@@ -307,7 +307,7 @@ will result in following node:
 		      (format "<body>\n%s\n</body>" contents))))))
 
 (defun org-freeplane--build-node-contents (element contents info)
-  (let* ((title (case (org-element-type element)
+  (let* ((title ( (org-element-type element)
 		  (headline
 		   (org-element-property :title element))
 		  (org-data
@@ -331,7 +331,7 @@ will result in following node:
 				(when itemized-contents-p
 				  contents))))
     (concat (let ((title (org-export-data title info)))
-	      (case org-freeplane-section-format
+	      ( org-freeplane-section-format
 		(inline
 		  (org-freeplane--richcontent
 		   'node (concat (format "\n<h2>%s</h2>" title)
@@ -422,13 +422,13 @@ holding contextual information."
 	 ;; Headline order (i.e, first digit of the section number)
 	 (headline-order (car (org-export-get-headline-number headline info))))
     (cond
-     ;; Case 1: This is a footnote section: ignore it.
+     ;;  1: This is a footnote section: ignore it.
      ((org-element-property :footnote-section-p headline) nil)
-     ;; Case 2. This is a deep sub-tree, export it as a list item.
+     ;;  2. This is a deep sub-tree, export it as a list item.
      ;;         Delegate the actual export to `html' backend.
      ((org-export-low-level-p headline info)
       (org-html-headline headline contents info))
-     ;; Case 3. Standard headline.  Export it as a section.
+     ;;  3. Standard headline.  Export it as a section.
      (t
       (let* ((section-number (mapconcat 'number-to-string
 					(org-export-get-headline-number
